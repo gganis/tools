@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# template for substituting a string in a file ...
+#
+# sub string1 string2 file
+#
+# substitute string1 with string2 (if any) in file
+#
+
+mv $3 $3.tmp
+sed -e "s|$1|$2|" < $3.tmp > $3
+rm -f $3.tmp
+

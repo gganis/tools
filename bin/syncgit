@@ -1,0 +1,77 @@
+#!/bin/sh
+
+SRC="/home/ganis/local/root/GIT/root"
+
+if test -f .gitsrc ; then
+   SRC=`cat .gitsrc`
+fi
+
+CONF="no"
+if test ! "x$1" = "x"; then
+   if test -d "$1" || test -d "/home/ganis/local/root/$1/root"; then
+      SRC="$1"
+      if test ! -d "$1" ; then
+         SRC="/home/ganis/local/root/$1/root"
+      fi
+      if test "x$2" = "xconf"; then
+         CONF="yes"
+      fi
+   elif test "x$1" = "xconf"; then
+      CONF="yes"
+   else
+      echo " Unknown 1st argument '$1'!"
+      exit 1
+   fi
+fi
+
+CWD=`pwd`
+cd $SRC
+pwd
+BNC=`git rev-parse --abbrev-ref HEAD`
+cd $CWD
+
+echo "Synchronizing branch '$BNC' from '$SRC' ..."
+
+# Check branch name
+TBNC=`basename $CWD`
+if test ! "x$TBNC" = "x$BNC"; then
+   echo " >>>>"
+   echo " >>>> Local directory name '$TBNC' does not match current branch name '$BNC'"
+   echo " >>>> (hint: ROOTSYS is currently set to $ROOTSYS: is this what you expect?)"
+   echo " >>>> (hint: check also your .gitsrc, if any)"
+   echo " >>>> Are you sure you want to continue? [y/N]"
+   read ans
+   upa=`echo "$ans" | tr '[a-z]' '[A-Z]'`
+   if test ! "x$upa" = "xY" && test ! "x$upa" = "xYES"; then
+      exit 1
+   fi
+fi
+
+# Create .gitsrc
+echo "$SRC" > .gitsrc 
+
+# Synchronize
+rsync -ac --exclude='**.git' $SRC/* .
+
+if test "x$CONF" = "xyes"; then
+   if test ! -f "config.status" ; then
+      echo " >>>>"
+      echo " >>>> No config.status found: creating an empty one."
+      echo " >>>> You can put your configuration option in it for next configuration run."
+      echo " >>>>"
+cat > config.status << EOF
+EOF
+   fi
+
+   CFGSH="./configure"
+   if test ! -f $CFGSH ; then
+      echo " No valid configure script found: cannot continue!"
+      exit 1
+   fi
+
+   # Configure now ...
+   echo "Configuring ..."
+   $CFGSH `cat config.status`
+fi
+
+echo "Done!"

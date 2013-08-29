@@ -1,0 +1,93 @@
+#!/bin/sh
+
+
+# function to get the name of the onwer of process ID '$1';
+# the result is saved in found_owner
+get_owner() {
+
+  # Reset the output
+  found_owner=""
+
+  # Create tmp file
+  grep "Uid:" /proc/$1/status > /tmp/xxx_uid.txt
+
+  # Read the file content
+  while read -r uu ruid euid dum; do
+     # $ruid and euid are the {real,effective} Uid os the owner
+     rid=`grep x:$ruid: /etc/passwd | cut -d':' -f1`
+     eid=`grep x:$euid: /etc/passwd | cut -d':' -f1`
+     found_owner="$rid,$eid"
+  done < /tmp/xxx_uid.txt
+
+  # Cleanup
+  rm -fr /tmp/xxx_uid.txt
+}
+
+# function to get the list of processes '$1' currently running;
+# the result is saved in found_pids in the form "pid1 (owner1) pid2 (owner2) ...";
+# if '$2" is not null, the command line is required to contain $2.
+get_pids() {
+
+  # Reset the output
+  found_pids=""
+
+  # Create tmp file
+  grep -h $1 /proc/*/stat > /tmp/xxx_proc.txt
+
+  # Multiple PIDs
+  multi="no"
+
+  # Read the file content
+  while read -r xx yy zz; do
+     if test "x$yy" = "x($1)" ; then
+        # Get owner of the process
+        get_owner $xx
+        if test ! "x$2" = "x" ; then
+           cmd=`grep $2 /proc/$xx/cmdline`
+           if test ! "x$cmd" = "x" ; then
+              if test ! "x$found_pids" = "x" ; then
+                 multi="yes"
+                 found_pids="$xx ($found_owner), $found_pids"
+              else
+                 found_pids="$xx ($found_owner)"
+              fi
+           fi
+        else
+           if test ! "x$found_pids" = "x" ; then
+              multi="yes"
+              found_pids="$xx ($found_owner), $found_pids"
+           else
+              found_pids="$xx ($found_owner)"
+           fi
+        fi
+     fi
+  done < /tmp/xxx_proc.txt
+
+  # Cleanup
+  rm -fr /tmp/xxx_proc.txt
+}
+
+get_pids $1 $2
+
+echo "PIDs: $found_pids"
+
+pid=$found_pids
+if test "x$multi" = "xyes" ; then
+   echo "Enter PID"
+   read pid
+fi
+
+
+GDBCMDS=/tmp/.gdbcmds
+
+if test -f $GDBCMDS ;  then
+   rm -fr $GDBCMDS
+fi
+cat >> $GDBCMDS << EOF
+thread apply all bt
+EOF
+
+gdb -p $pid -x $GDBCMDS
+
+rm -fr $GDBCMDS
+

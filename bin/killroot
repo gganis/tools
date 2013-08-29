@@ -1,0 +1,43 @@
+#!/bin/sh
+
+#
+#  killroot : kills local root stuff
+#
+#  nb: sends SIGTERM by default; to send another signal use
+#      'killroot <SIGNAL>'
+#
+
+KILLTYPE=$1
+if test "x$KILLTYPE" = "x" ; then
+   KILLTYPE=15
+fi
+echo "Sending ... $KILLTYPE"
+
+
+TMPFILE="/tmp/killroot.tmp"
+
+if test -r $TMPFILE ; then
+  rm -f $TMPFILE
+fi
+
+# grep ps
+ps aU $USER | grep roo | grep -v totalview | grep -v "ssh pcroot" | grep -v "ssh proof"> $TMPFILE
+
+exec 10< $TMPFILE
+
+read v_id v_pts v_S  v_time v_name v_opt <&10
+
+while [ ! "x$v_id" = "x" ] ; do
+
+   if test ! "x$v_name" = "x/bin/sh" && test ! "x$v_name" = "xgrep" ; then
+      echo "killing $v_name ($v_id) ... "
+      kill -$KILLTYPE $v_id
+   fi 
+
+   read v_id v_pts v_S  v_time v_name v_opt  <&10
+
+done
+
+rm -f $TMPFILE
+
+exit

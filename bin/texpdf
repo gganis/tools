@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# 
+echo " LaTeXing $1.tex "
+if -f $1.tex ; then
+   latex $1.tex
+else
+   latex $1
+fi
+
+echo " Creating $1.pdf "
+dvipdf $1.dvi $1.pdf
+
+echo " Acroreading $1.pdf "
+acroread $1.pdf
+#
+exit
+
