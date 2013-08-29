@@ -45,6 +45,3 @@ echo "Build time: $btime secs with $jflag"
 # Go back
 cd $CWD
 
-
-
-
