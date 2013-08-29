@@ -5,10 +5,16 @@ if test "x$ROOTSYS" = "x"; then
    exit 1
 fi
 
-jflag="-j25"
+jflag="-j2"
+if test -f /proc/cpuinfo ; then
+   np=`grep processor /proc/cpuinfo | wc -l`
+   npb=`expr $np + 1`
+   jflag="-j$npb"
+fi
 if test ! "x$1" = "x"; then
   jflag="-j$1"
 fi
+echo "Using jflag: $jflag"
 
 outfile="compilation.times"
 
