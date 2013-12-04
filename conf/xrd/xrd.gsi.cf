@@ -1,0 +1,2 @@
+xrootd.seclib libXrdSec.so
+sec.protocol gsi -cert:/etc/grid-security/hostcert.pem -key:/etc/grid-security/hostkey.pem
