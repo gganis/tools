@@ -74,15 +74,41 @@ if test ! "x$1" = "x" ; then
 
 fi
 
-rdbase=`dirname $rd`
-rdbase=`dirname $rdbase`
-if test "x$1" = "xxrootd" ; then
-   rd="$HOME/local/xrootd/xrootd"
-elif test "x$rdbase" = "x." ; then
-   rd="$HOME/local/xrootd/$rd/xrootd"
+# Check if there is a request for a sub-dir
+subdir=""
+rddir=`dirname $rd`
+echo "rd: $rd, rddir: $rddir"
+if test "x$rddir" = "x." ; then
+  if test -d "$rd/xrootd"; then
+     subdir="$rd/xrootd"
+  else
+     subdir="$rd"
+  fi
+else
+  rddirn=`dirname $rddir`
+  if test "x$rddirn" = "x." ; then
+     subdir="$rd"
+  fi
+fi
+if test ! "x$subdir" = "x" ; then
+   rd="$HOME/local/xrootd/$subdir"
 fi
 
 pwdsave="$PWD"
+
+if test ! -d $rd ; then
+   docreate="no"
+   echo "Directory $rd does not exist: do you want to create it? (N/y)"
+   read ans
+   if test "x$ans" = "xY" || test "x$ans" = "xy" ; then
+      docreate="yes"
+   fi
+   if test "x$docreate" = "xyes" ; then
+      mkdir -p $rd
+   else
+      exit 1
+   fi
+fi
 
 cd "$rd"
 rd="$PWD"
