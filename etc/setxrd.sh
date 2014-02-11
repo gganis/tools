@@ -9,7 +9,12 @@ xrdsys=""
 dirs="$1 $HOME/local/xrootd/$1/install $HOME/local/xrootd/$1"
 for d in $dirs ; do
    if test -d $d ; then
-      xrdsys="$d"
+      dd=`basename $d`
+      if test "x$dd" = "x$d" ; then
+         xrdsys="$d/install"
+      else
+         xrdsys="$d"
+      fi
       break
    fi
 done
