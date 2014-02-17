@@ -1,0 +1,32 @@
+#!/bin/sh
+
+jflag="-j2"
+if test -f /proc/cpuinfo ; then
+   np=`grep processor /proc/cpuinfo | wc -l`
+   npb=`expr $np + 1`
+   jflag="-j$npb"
+fi
+if test ! "x$1" = "x"; then
+  jflag="-j$1"
+fi
+echo "Using jflag: $jflag"
+
+outfile="compilation.times"
+
+# Cleanup
+rm -f $outfile
+# Record starting time
+start=`date +%s`
+date > $outfile
+# Build
+make -s $jflag
+# # Make sure everything has been build
+# make
+# Record end time
+date >> $outfile;
+end=`date +%s`
+# Show
+cat $outfile
+btime=`expr $end - $start`
+echo "Build time: $btime secs with $jflag"
+
