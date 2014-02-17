@@ -1,0 +1,124 @@
+#!/bin/sh
+
+#--- Help function -------------
+printhelp()
+{
+   echo "   "
+   echo "  rcmk"
+   echo "   "
+   echo "  Purpose: Configure, build ... ROOT with cmake"
+   echo "   "
+   echo "  Syntax:"
+   echo "           rcmk [-h|--help] [-v] [conf|build] [-x=/path/to/xrootd]"
+   echo "   "
+   echo "   -h | --help   Print this help"
+   echo "   -v            Verbose mode"
+   echo "   -x=xrddir     Path to XRootD"
+   echo "   "
+}
+
+SRC="/home/ganis/local/root/GIT/root"
+CWD=`pwd`
+
+#
+# Check the branch
+cd $SRC
+pwd
+BNC=`git rev-parse --abbrev-ref HEAD`
+cd $CWD
+
+echo "Configuring/building branch '$BNC' from '$SRC' ..."
+
+# Check branch name
+TBNC=`basename $CWD`
+if test ! "x$TBNC" = "x$BNC"; then
+   echo " >>>>"
+   echo " >>>> Local directory name '$TBNC' does not match current branch name '$BNC'"
+   echo " >>>> (hint: ROOTSYS is currently set to $ROOTSYS: is this what you expect?)"
+   echo " >>>> Are you sure you want to continue? [y/N]"
+   read ans
+   upa=`echo "$ans" | tr '[a-z]' '[A-Z]'`
+   if test ! "x$upa" = "xY" && test ! "x$upa" = "xYES"; then
+      exit 1
+   fi
+fi
+
+#
+# Install dir
+INST="/home/ganis/local/root/cmake/install/$TBNC"
+
+#
+# Init some variables
+XRDOPT=""
+XRDDIR=""
+
+#
+# Parse long options first
+other_args=
+short_opts=
+for i in $@ ; do
+   opt=""
+   case $i in
+      --*) opt=`echo "$i" | sed 's/--//'` ;;
+      -*) short_opts="$short_opts $i" ;;
+      *) other_args="$other_args $i"; short_opts="$short_opts $i" ;;
+   esac
+   if test ! "x$opt" = "x" ; then
+      case "$opt" in
+         *=*) oarg=`echo "$opt" | sed 's/[-_a-zA-Z0-9]*=//'`;;
+         *) oarg= ;;
+      esac ;
+      case $opt in
+         xrootd=*) export XRDSYS="$OPTARG" ; XRDOPT="-Dxrootd=ON" ;;
+      esac
+   fi
+done
+
+echo "$short_opts"
+if test ! "x$short_opts" = "x" ; then
+   echo "Parsing shorts"
+   while getopts x:hv i $short_opts ; do
+      echo "i:$i  OPTARG:$OPTARG"
+      case $i in
+      x) export XRDSYS="$OPTARG" ; XRDOPT="-Dxrootd=ON"  ;;
+      h) printhelp ; exit ;;
+      v) DBGOPT="-v" ;;
+      \?) printhelp; exit 1 ;;
+      esac
+      if test ! "x$OPTARG" = "x" ; then
+         noa=
+         for a in $other_args ; do
+            if test ! "x$OPTARG" = "x$a" ; then
+               noa="$noa $a"
+            fi
+         done
+         other_args=$noa
+      fi
+   done
+
+   # Fill empty fields with any non-prefixed argument
+   if test ! "x$other_args" = "x" && test "x$DSNAME" = "x" ; then
+      DSNAME="-d $other_args"
+   fi
+fi
+
+conf=
+if test ! "x$other_args" = "x" ; then
+   for i in $other_args ; do
+      if test "x$i" = "xconf" ; then
+         conf="yes"
+         break
+      fi
+   done
+fi
+
+if test "x$conf" = "xyes" ; then
+   echo "cmake -DCMAKE_INSTALL_PREFIX=$INST $XRDOPT $SRC"
+   cmake -DCMAKE_INSTALL_PREFIX=$INST $XRDOPT $SRC
+   echo "Re-run with 'build' to build ..."
+else
+   /home/ganis/bin/build_cmake
+   echo "Run 'make install' to install"
+fi
+
+
