@@ -1,5 +1,6 @@
 #
 # Functions
+function goroot () { . /home/ganis/etc/goroot.sh "$1"; }
 function goxrd () { . /home/ganis/etc/xrd-env.sh "$1 $2"; }
 function setroot () { . /home/ganis/etc/root-env.sh "$1 $2"; }
 function setxrd () { . /home/ganis/etc/xrd-env.sh "$1 $2"; }
