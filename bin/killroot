@@ -21,22 +21,16 @@ if test -r $TMPFILE ; then
 fi
 
 # grep ps
-ps aU $USER | grep roo | grep -v totalview | grep -v "ssh pcroot" | grep -v "ssh proof"> $TMPFILE
+ps aU $USER | grep roo | grep -v totalview | grep -v "ssh pcroot" | grep -v "ssh proof" | grep -v sublime > $TMPFILE
 
-exec 10< $TMPFILE
-
-read v_id v_pts v_S  v_time v_name v_opt <&10
-
-while [ ! "x$v_id" = "x" ] ; do
+while read -r v_id v_pts v_S  v_time v_name v_opt; do
 
    if test ! "x$v_name" = "x/bin/sh" && test ! "x$v_name" = "xgrep" ; then
       echo "killing $v_name ($v_id) ... "
       kill -$KILLTYPE $v_id
-   fi 
+   fi
 
-   read v_id v_pts v_S  v_time v_name v_opt  <&10
-
-done
+done < $TMPFILE
 
 rm -f $TMPFILE
 
