@@ -78,6 +78,7 @@ fi
 # Check if there is a request for a sub-dir
 subdir=""
 rddir=`dirname $rd`
+echo "rd: $rd, rddir: $rddir"
 if test "x$rddir" = "x." ; then
   if test -d "$rd/root"; then
      subdir="$rd/root"
