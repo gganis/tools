@@ -5,6 +5,7 @@ function goxrd () { . /home/ganis/etc/xrd-env.sh "$1 $2"; }
 function setroot () { . /home/ganis/etc/root-env.sh "$1 $2"; }
 function setxrd () { . /home/ganis/etc/xrd-env.sh "$1 $2"; }
 function setroottest () { . /home/ganis/etc/roottest-env.sh "$1 $2"; }
+function addpath () { . /home/ganis/etc/addpath.sh "$1"; }
 
 # Path
 export PATH=/home/ganis/bin:$PATH
