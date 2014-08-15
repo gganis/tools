@@ -1,0 +1,29 @@
+#!/bin/sh
+
+CWD=`pwd`
+
+# Get branch name
+BNC=`basename $CWD`
+echo "Configuring branch '$BNC' ..."
+
+SRC="$HOME/local/root/cmake/$BNC"
+INS="$HOME/local/root/install/$BNC"
+
+XCMK=cmake28
+CTST=
+CXRD=
+REST=
+
+for s in $@ ; do
+  if test "x$s" = "xtest" ; then
+     CTST="-Dtesting=ON"
+  elif test "x$s" = "xxrootd" ; then
+     CXRD="-Dxrootd=ON"
+  else
+     REST="$REST $s"
+  fi
+done
+
+echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $REST' ..."
+$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $REST
+
