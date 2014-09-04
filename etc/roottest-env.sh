@@ -60,7 +60,7 @@ fi
 cd "$rd"
 rd="$PWD"
 echo "Using roottest at $rd"
-export ROOTTEST_HOME="$rd"
+export ROOTTEST_HOME="$rd/"
 if test "x$cdtodir" = "xno" ; then
    cd "$pwdsave"
 fi
