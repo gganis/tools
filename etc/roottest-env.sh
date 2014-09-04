@@ -2,9 +2,11 @@
 # Source this to set all what you need to use roottest at <roottest_path> 
 #
 # Usage:
-#            source /Path/to/setroottest.sh <roottest_path>
+#            source /Path/to/setroottest.sh <roottest_path> [cd]
 #
 #
+set `echo "$1"`
+
 roottest_dir=""
 dirs="$1 $HOME/local/roottest/$1"
 for d in $dirs ; do
