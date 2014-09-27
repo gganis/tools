@@ -52,7 +52,8 @@ fi
 echo "$SRC" > .gitsrc 
 
 # Synchronize
-rsync -ac --exclude='**.git' $SRC/* .
+RSOPTS="--progress -v -c -rlpgoD"
+rsync $RSOPTS --exclude='**.git' $SRC/* .
 
 if test "x$CONF" = "xyes"; then
    if test ! -f "config.status" ; then

@@ -34,6 +34,7 @@ fi
 echo "$SRC" > .gitsrc 
 
 # Synchronize
-rsync -ac --exclude='**.git' $SRC/* .
+RSOPTS="--progress -v -c -rlpgoD"
+rsync $RSOPTS --exclude='**.git' $SRC/* .
 
 echo "Done!"
