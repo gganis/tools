@@ -8,56 +8,73 @@
 #
 set `echo "$1"`
 
-# Strip present settings, if there
-if test ! "x$ROOTSYS" = "x" ; then
+WRKSYS=`uname -s`
 
-   # Trim $PATH
-   tpath=""
-   idx0="0"
-   idxt=`expr index "${PATH}" ':'`
-   idxl=`expr $idxt - 1`
-   while test ! "x$idxt" = "x0" ; do
-      spath="${PATH:$idx0:$idxl}"
-      if test ! "x$ROOTSYS/bin" = "x$spath" ; then
-         if test ! "x$spath" = "x" ; then
-            tpath="$tpath:$spath"
-         fi
-      fi
-      idx0=`expr $idx0 + $idxt`
-      idxt=`expr index "${PATH:$idx0}" ':'`
-      idxl=`expr $idxt - 1`
-   done
-   spath="${PATH:$idx0}"
-   if test ! "x$ROOTSYS/bin" = "x$spath" ; then
-      tpath="$tpath:$spath"
+drop_from_path()
+{
+   # Assert that we got enough arguments
+   if test $# -ne 2 ; then
+      echo "drop_from_path: needs 2 arguments"
+      return 1
    fi
 
-   # Trim $LD_LIBRARY_PATH
-   tldpath=""
-   idx0="0"
-   idxt=`expr index "${LD_LIBRARY_PATH}" ':'`
-   idxl=`expr $idxt - 1`
-   while test ! "x$idxt" = "x0" ; do
-      spath="${LD_LIBRARY_PATH:$idx0:$idxl}"
-      if test ! "x$ROOTSYS/lib" = "x$spath" ; then
-         if test ! "x$spath" = "x" ; then
-            tldpath="$tldpath:$spath"
-         fi
-      fi
-      idx0=`expr $idx0 + $idxt`
-      idxt=`expr index "${LD_LIBRARY_PATH:$idx0}" ':'`
-      idxl=`expr $idxt - 1`
-   done
-   spath="${LD_LIBRARY_PATH:$idx0}"
-   if test ! "x$ROOTSYS/lib" = "x$spath" ; then
-      tldpath="$tldpath:$spath"
-   fi
-else
+   p=$1
+   drop=$2
 
-   # do not touch
-   tpath="$PATH"
-   tldpath="$LD_LIBRARY_PATH"
+   newpath=`echo $p | sed -e "s;:${drop}:;:;g" \
+                          -e "s;:${drop};;g"   \
+                          -e "s;${drop}:;;g"   \
+                          -e "s;${drop};;g"`
+}
+
+if [ -n "${ROOTSYS}" ] ; then
+   old_rootsys=${ROOTSYS}
 fi
+
+if [ -n "${old_rootsys}" ] ; then
+   if [ -n "${PATH}" ]; then
+      drop_from_path "$PATH" ${old_rootsys}/bin
+      PATH=$newpath
+   fi
+   if [ -n "${LD_LIBRARY_PATH}" ]; then
+      drop_from_path $LD_LIBRARY_PATH ${old_rootsys}/lib
+      LD_LIBRARY_PATH=$newpath
+   fi
+   if [ -n "${DYLD_LIBRARY_PATH}" ]; then
+      drop_from_path $DYLD_LIBRARY_PATH ${old_rootsys}/lib
+      DYLD_LIBRARY_PATH=$newpath
+   fi
+   if [ -n "${SHLIB_PATH}" ]; then
+      drop_from_path $SHLIB_PATH ${old_rootsys}/lib
+      SHLIB_PATH=$newpath
+   fi
+   if [ -n "${LIBPATH}" ]; then
+      drop_from_path $LIBPATH ${old_rootsys}/lib
+      LIBPATH=$newpath
+   fi
+   if [ -n "${PYTHONPATH}" ]; then
+      drop_from_path $PYTHONPATH ${old_rootsys}/lib
+      PYTHONPATH=$newpath
+   fi
+   if [ -n "${MANPATH}" ]; then
+      drop_from_path $MANPATH ${old_rootsys}/man
+      MANPATH=$newpath
+   fi
+fi
+
+if [ -z "${MANPATH}" ]; then
+   # Grab the default man path before setting the path to avoid duplicates
+   if `which manpath > /dev/null 2>&1` ; then
+      default_manpath=`manpath`
+   else
+      default_manpath=`man -w 2> /dev/null`
+   fi
+fi
+
+# do not touch
+tpath="$PATH"
+tldpath="$LD_LIBRARY_PATH"
+tdyldpath="$DYLD_LIBRARY_PATH"
 
 
 cdtodir="no"
@@ -119,8 +136,42 @@ if test "x$cdtodir" = "xno" ; then
    cd "$pwdsave"
 fi
 
-export PATH="$ROOTSYS/bin:$tpath"
-export LD_LIBRARY_PATH="$ROOTSYS/lib:$tldpath"
+bindir="$ROOTSYS/bin"
+libdir="$ROOTSYS/lib"
+mandir="$ROOTSYS/man"
+
+if [ -z "${PATH}" ]; then
+   PATH=$bindir; export PATH
+else
+   PATH=$bindir:$PATH; export PATH
+fi
+
+if [ -z "${LD_LIBRARY_PATH}" ]; then
+   LD_LIBRARY_PATH=$libdir; export LD_LIBRARY_PATH       # Linux, ELF HP-UX
+else
+   LD_LIBRARY_PATH=$libdir:$LD_LIBRARY_PATH; export LD_LIBRARY_PATH
+fi
+
+if test "x$WRKSYS" = "xDarwin" ; then
+  if [ -z "${DYLD_LIBRARY_PATH}" ]; then
+     DYLD_LIBRARY_PATH=$libdir; export DYLD_LIBRARY_PATH   # Mac OS X
+  else
+     DYLD_LIBRARY_PATH=$libdir:$DYLD_LIBRARY_PATH; export DYLD_LIBRARY_PATH
+  fi
+fi
+
+
+if [ -z "${PYTHONPATH}" ]; then
+   PYTHONPATH=$libdir; export PYTHONPATH
+else
+   PYTHONPATH=$libdir:$PYTHONPATH; export PYTHONPATH
+fi
+
+if [ -z "${MANPATH}" ]; then
+   MANPATH=`dirname $mandir`:${default_manpath}; export MANPATH
+else
+   MANPATH=`dirname $mandir`:$MANPATH; export MANPATH
+fi
 
 # Try to guess the related xrootd
 if test -f $ROOTSYS/bin/setxrd.sh ; then
