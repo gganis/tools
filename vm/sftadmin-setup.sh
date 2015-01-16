@@ -7,7 +7,7 @@ if test "x$SYST" = "x" ; then
       SUGRP="wheel"
    elif test -f /etc/debian_version; then
       SYST="deb"
-      SUGRP="sudo,admin"
+      SUGRP="sudo,adm"
    else
       echo "Unsupported system"
       exit 1
