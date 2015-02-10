@@ -7,11 +7,41 @@ BNC=`basename $CWD`
 echo "Configuring branch '$BNC' ..."
 
 SRC="$HOME/local/root/cmake/$BNC"
+if test ! -d $SRC ; then
+   echo "Source dir $SRC does not exists - creating ..."
+   mkdir -p $SRC
+   if test ! "x$?" = "x0" ; then
+      echo "Could not create $SRC - exiting"
+      exit 1
+   fi
+fi
 INS="$HOME/local/root/install/$BNC"
+if test ! -d $INS ; then
+   echo "Install dir $INS does not exists - creating ..."
+   mkdir -p $INS
+   if test ! "x$?" = "x0" ; then
+      echo "Could not create $INS - exiting"
+      exit 1
+   fi
+fi
 
-XCMK=cmake28
+# Sync
+cd $SRC
+syncgit
+cd $CWD
+# GIT info files, if any
+if test -f $SRC/RGitCommit.h.tmp ; then
+   cp -rp $SRC/RGitCommit.h.tmp .
+   if test -f $SRC/etc/gitinfo.txt ; then
+      mkdir -p etc
+      cp -rp $SRC/etc/gitinfo.txt etc
+   fi
+fi
+
+XCMK=cmake
 CTST=
 CXRD=
+CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 REST=
 
 for s in $@ ; do
@@ -19,11 +49,13 @@ for s in $@ ; do
      CTST="-Dtesting=ON"
   elif test "x$s" = "xxrootd" ; then
      CXRD="-Dxrootd=ON"
+  elif test "x$s" = "xdebug" ; then
+     CCBT="-DCMAKE_BUILD_TYPE=Debug"
   else
      REST="$REST $s"
   fi
 done
 
 echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $REST' ..."
-$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $REST
+$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $REST
 
