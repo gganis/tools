@@ -1,0 +1,9 @@
+#!/bin/sh
+
+SRC="/Users/ganis/Pictures"
+DST="/Volumes/PHOTOS/Pictures"
+
+# Synchronize
+rsync --progress -v -c -rlpgoD $SRC/* $DST
+
+echo "Done!"
