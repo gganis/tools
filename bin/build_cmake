@@ -7,9 +7,30 @@ if test -f /proc/cpuinfo ; then
    jflag="-j$npb"
 fi
 if test ! "x$1" = "x"; then
-  jflag="-j$1"
+   jflag="-j$1"
 fi
 echo "Using jflag: $jflag"
+
+# Synchronize, if possible
+if test -f CMakeCache.txt ; then
+   srcdir=`grep "ROOT_SOURCE_DIR" CMakeCache.txt | sed 's/ROOT_SOURCE_DIR:STATIC=//'`
+   echo $srcdir
+   if test -d $srcdir ; then
+      CWD=`pwd`
+      cd $srcdir
+      # Sync
+      /home/ganis/bin/syncgit
+      if test ! "x$?" = "x0" ; then
+         echo "Synchronization failed"
+         exit 1
+      fi
+      cd $CWD
+   else
+   	  echo "Warning:"
+   	  echo "   Could not identify directory for synchronization (found: $srcdir)"
+   	  echo "   Consider running synchornization manually"
+   fi
+fi
 
 outfile="compilation.times"
 
