@@ -28,7 +28,8 @@ fi
 CWD=`pwd`
 cd $SRC
 pwd
-BNC=`git rev-parse --abbrev-ref HEAD`
+RAWBNC=`git rev-parse --abbrev-ref HEAD`
+BNC=`basename $RAWBNC`
 cd $CWD
 
 echo "Synchronizing branch '$BNC' from '$SRC' ..."
@@ -50,6 +51,26 @@ fi
 
 # Create .gitsrc
 echo "$SRC" > .gitsrc 
+
+# Generate etc/gitinfo.txt
+if test -x $SRC/build/unix/gitinfo.sh ; then
+   rm -f etc/gitinfo.txt
+   mkdir -p etc
+   $SRC/build/unix/gitinfo.sh $SRC
+   if test -x $SRC/build/unix/githeader.sh ; then
+      $SRC/build/unix/githeader.sh RGitCommit.h.tmp
+   else
+      echo "build/unix/githeader.sh not found or not executable! Cannot generate RGitCommit.h.tmp"
+   fi
+else
+   echo "build/unix/gitinfo.sh not found or not executable! Cannot generate etc/gitinfo.txt"
+fi
+if test ! -f etc/gitinfo.txt ; then
+   echo "Failed to generate etc/gitinfo.txt: RGitCommit.h will be empty!"
+fi
+if test ! -f RGitCommit.h.tmp ; then
+   echo "Failed to generate RGitCommit.h.tmp: RGitCommit.h will be empty!"
+fi
 
 # Synchronize
 RSOPTS="--progress -v -c -rlpgoD"

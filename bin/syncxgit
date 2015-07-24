@@ -28,7 +28,8 @@ fi
 CWD=`pwd`
 cd $SRC
 pwd
-BNC=`git rev-parse --abbrev-ref HEAD`
+RAWBNC=`git rev-parse --abbrev-ref HEAD`
+BNC=`basename $RAWBNC`
 cd $CWD
 
 echo "Synchronizing branch '$BNC' from '$SRC' ..."
