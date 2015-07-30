@@ -53,8 +53,8 @@ for s in $@ ; do
   elif test "x$s" = "xdebug" ; then
      CCBT="-DCMAKE_BUILD_TYPE=Debug"
   elif test "x$s" = "xgcc" ; then
-     EGCC=`whihc gcc`
-     EGXX=`whihc g++`
+     EGCC=`which gcc`
+     EGXX=`which g++`
      CGCC="-DCMAKE_C_COMPILER=$EGCC -DCMAKE_CXX_COMPILER=$EGXX"
   else
      REST="$REST $s"
