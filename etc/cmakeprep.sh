@@ -17,7 +17,7 @@ ROOTLOC="/home/ganis/local/root"
 DIRS="$ROOTLOC/cmake/$TAG $ROOTLOC/build/$TAG $ROOTLOC/install/$TAG"
 for dd in $DIRS; do
    if test ! -d "$dd"; then
-      mkdir $dd
+      mkdir -p $dd
       if test ! -d "$dd"; then
          echo "Could not create $dd : quitting"
          exit 1
