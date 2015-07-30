@@ -42,6 +42,7 @@ XCMK=cmake
 CTST=
 CXRD=
 CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+CGCC=
 REST=
 
 for s in $@ ; do
@@ -51,11 +52,15 @@ for s in $@ ; do
      CXRD="-Dxrootd=ON"
   elif test "x$s" = "xdebug" ; then
      CCBT="-DCMAKE_BUILD_TYPE=Debug"
+  elif test "x$s" = "xgcc" ; then
+     EGCC=`whihc gcc`
+     EGXX=`whihc g++`
+     CGCC="-DCMAKE_C_COMPILER=$EGCC -DCMAKE_CXX_COMPILER=$EGXX"
   else
      REST="$REST $s"
   fi
 done
 
-echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $REST' ..."
-$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $REST
+echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $CGCC $REST' ..."
+$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $REST
 
