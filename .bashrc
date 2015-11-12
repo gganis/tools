@@ -1,15 +1,15 @@
 #
 # Functions
-function goroot () { . /home/ganis/etc/goroot.sh "$1"; }
-function goxrd () { . /home/ganis/etc/xrd-env.sh "$1 $2"; }
-function setroot () { . /home/ganis/etc/root-env.sh "$1 $2"; }
-function setxrd () { . /home/ganis/etc/xrd-env.sh "$1 $2"; }
-function setroottest () { . /home/ganis/etc/roottest-env.sh "$1 $2"; }
-function addpath () { . /home/ganis/etc/addpath.sh "$1"; }
-function cmakeprep () { . /home/ganis/etc/cmakeprep.sh "$1"; }
+function goroot () { . $HOME/etc/goroot.sh "$1"; }
+function goxrd () { . $HOME/etc/xrd-env.sh "$1 $2"; }
+function setroot () { . $HOME/etc/root-env.sh "$1 $2"; }
+function setxrd () { . $HOME/etc/xrd-env.sh "$1 $2"; }
+function setroottest () { . $HOME/etc/roottest-env.sh "$1 $2"; }
+function addpath () { . $HOME/etc/addpath.sh "$1"; }
+function cmakeprep () { . $HOME/etc/cmakeprep.sh "$1"; }
 
 # Path
-export PATH=/home/ganis/bin:$PATH
+export PATH=$HOME/bin:$PATH
 
 # Load in the git branch prompt script.
 source ~/.git-prompt.sh

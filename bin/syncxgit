@@ -1,7 +1,7 @@
 #!/bin/sh
 
-SRC="/home/ganis/local/xrootd/GIT/xrootd"
-BLD="/home/ganis/local/xrootd"
+SRC="$HOME/local/xrootd/GIT/xrootd"
+BLD="$HOME/local/xrootd"
 
 if test -f .gitsrc ; then
    SRC=`cat .gitsrc`

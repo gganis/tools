@@ -17,7 +17,7 @@ printhelp()
    echo "   "
 }
 
-SRC="/home/ganis/local/root/GIT/root"
+SRC="$HOME/local/root/GIT/root"
 CWD=`pwd`
 
 #
@@ -45,7 +45,7 @@ fi
 
 #
 # Install dir
-INST="/home/ganis/local/root/cmake/install/$TBNC"
+INST="$HOME/local/root/cmake/install/$TBNC"
 
 #
 # Init some variables
@@ -117,7 +117,7 @@ if test "x$conf" = "xyes" ; then
    cmake -DCMAKE_INSTALL_PREFIX=$INST $XRDOPT $SRC
    echo "Re-run with 'build' to build ..."
 else
-   /home/ganis/bin/build_cmake
+   $HOME/bin/build_cmake
    echo "Run 'make install' to install"
 fi
 

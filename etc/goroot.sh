@@ -2,7 +2,7 @@
 # Usage:   source ~/etc/goroot.sh <dir_tag>
 #
 if test "x$ROOTSRC" = "x" ; then
-   ROOTSRC="/home/ganis/local/root/GIT/root"
+   ROOTSRC="$HOME/local/root/GIT/root"
 fi
 
 SRC=$1

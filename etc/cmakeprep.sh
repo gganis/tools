@@ -2,7 +2,7 @@
 # Usage:   source ~/etc/cmakeprep.sh <dir_tag>
 #
 if test "x$ROOTSRC" = "x" ; then
-   ROOTSRC="/home/ganis/local/root/GIT/root"
+   ROOTSRC="$HOME/local/root/GIT/root"
 fi
 
 TAG=$1
@@ -14,7 +14,7 @@ if test "x$TAG" = "x" ; then
 
 else
 
-   ROOTLOC="/home/ganis/local/root"
+   ROOTLOC="$HOME/local/root"
 
    failed="false"
    DIRS="$ROOTLOC/cmake/$TAG $ROOTLOC/build/$TAG $ROOTLOC/install/$TAG"

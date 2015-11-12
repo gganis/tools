@@ -19,7 +19,7 @@ if test -f CMakeCache.txt ; then
       CWD=`pwd`
       cd $srcdir
       # Sync
-      /home/ganis/bin/syncgit
+      $HOME/bin/syncgit
       if test ! "x$?" = "x0" ; then
          echo "Synchronization failed"
          exit 1
