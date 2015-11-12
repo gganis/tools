@@ -40,7 +40,11 @@ rm -f $outfile
 start=`date +%s`
 date > $outfile
 # Build
-make -s $jflag
+BCMD=`which ninja`
+if test "x$BCMD" = "x" ; then
+   BCMD="make -s $jflag"
+fi
+$BCMD
 # # Make sure everything has been build
 # make
 # Record end time
