@@ -39,6 +39,7 @@ if test -f $SRC/RGitCommit.h.tmp ; then
 fi
 
 XCMK=cmake
+CDEF="-Dccache=ON -GNinja"
 CTST=
 CXRD=
 CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
@@ -62,5 +63,4 @@ for s in $@ ; do
 done
 
 echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $CGCC $REST' ..."
-$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $REST
-
+$XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $REST
