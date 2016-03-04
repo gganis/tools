@@ -44,6 +44,7 @@ CTST=
 CXRD=
 CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 CGCC=
+XGCC=
 REST=
 
 for s in $@ ; do
@@ -61,6 +62,9 @@ for s in $@ ; do
      REST="$REST $s"
   fi
 done
+if test -f $HOME/.rootcmake ; then
+   XGCC=`cat $HOME/.rootcmake`
+fi
 
 echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $CGCC $REST' ..."
-$XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $REST
+$XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $XGCC $REST
