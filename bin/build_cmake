@@ -42,9 +42,12 @@ date > $outfile
 # Build
 BCMD=`which ninja`
 if test "x$BCMD" = "x" ; then
-   BCMD="make -s $jflag"
+   BCMD=`which ninja-build`
+   if test "x$BCMD" = "x" ; then
+      BCMD="make -s $jflag"
+   fi
 fi
-$BCMD
+$BCMD $jflag
 # # Make sure everything has been build
 # make
 # Record end time
@@ -54,4 +57,14 @@ end=`date +%s`
 cat $outfile
 btime=`expr $end - $start`
 echo "Build time: $btime secs with $jflag"
+
+# Make sure test and tutorials directories are up-to-date
+AUXDIRS="test tutorials"
+echo "Synchronize auxilliary dirs ... from $srcdir to $pwd"
+RSOPTS="--progress -v -c -rlpgoD"
+for d in $AUXDIRS ; do
+   echo "$d"
+   rsync $RSOPTS --exclude='**.git' $srcdir/$d .
+done
+
 
