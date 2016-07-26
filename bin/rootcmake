@@ -45,7 +45,7 @@ CXRD=
 CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 CGCC=
 XGCC=
-REST=
+REST="-Dtmva=OFF"
 
 for s in $@ ; do
   if test "x$s" = "xtest" ; then
