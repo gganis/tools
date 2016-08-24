@@ -58,12 +58,15 @@ for s in $@ ; do
      EGCC=`which gcc`
      EGXX=`which g++`
      CGCC="-DCMAKE_C_COMPILER=$EGCC -DCMAKE_CXX_COMPILER=$EGXX"
+  elif test "x$s" = "xoldabi" ; then
+     XGCC="-DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0"
   else
      REST="$REST $s"
   fi
 done
 if test -f $HOME/.rootcmake ; then
-   XGCC=`cat $HOME/.rootcmake`
+   XTMP=`cat $HOME/.rootcmake`
+   XGCC="$XGCC $XTMP"
 fi
 
 echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $CGCC $REST' ..."
