@@ -1,0 +1,4 @@
+
+  Compilation:
+          g++ -o checkCache checkCache.cxx
+          g++ -o releaseFileCache releaseFileCache.cxx
