@@ -45,7 +45,9 @@ CXRD=
 CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 CGCC=
 XGCC=
+CTBB=
 REST="-Dtmva=OFF"
+REST=
 
 for s in $@ ; do
   if test "x$s" = "xtest" ; then
@@ -54,6 +56,8 @@ for s in $@ ; do
      CXRD="-Dxrootd=ON"
   elif test "x$s" = "xdebug" ; then
      CCBT="-DCMAKE_BUILD_TYPE=Debug"
+  elif test "x$s" = "xtbb" ; then
+     CCBT="-Dimt=ON -Dbuiltin_tbb=ON"
   elif test "x$s" = "xgcc" ; then
      EGCC=`which gcc`
      EGXX=`which g++`
@@ -69,5 +73,5 @@ if test -f $HOME/.rootcmake ; then
    XGCC="$XGCC $XTMP"
 fi
 
-echo "Running '$XCMK $SRC -DCMAKE_INSTALL_PREFIX=$INS $CTST $CXRD $CGCC $REST' ..."
+echo "Running '$XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $XGCC $REST'"
 $XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $XGCC $REST
