@@ -2,7 +2,7 @@
    
 # Installing xrootd
 echo "Installing XRootD ... "
-wget http://test-sftnight.web.cern.ch/test-sftnight/aob/installXrootd.sh
+wget http://test-sftnight.web.cern.ch/test-sftnight/aob/installXrootd.sh -o installXrootd.sh
 chmod a+x installXrootd.sh
 sudo mkdir /opt/xrootd	
 # Uncomment if requiring the old CXX11_ABI (on new Ubuntus, typically)
