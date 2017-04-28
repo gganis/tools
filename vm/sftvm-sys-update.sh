@@ -36,11 +36,13 @@ if test "x$SYST" = "xrh" ; then
                libX11-devel libXpm-devel libXft-devel libXext-devel \
                cmake ruby valgrind doxygen python-devel curl graphviz \
                ntp openssl-devel glibc-devel.i686 glibc-devel mysql-devel \
+	       krb5-devel \
                java-1.8.0-openjdk
 else
    $pkgm install -y git subversion dpkg-dev make g++ gcc gfortran binutils \
                libx11-dev libxpm-dev libxft-dev libxext-dev \
                cmake ruby valgrind doxygen python-dev curl graphviz ntp libssl-dev libc6-i386 \
+	       krb5-user libkrb5-dev \
                default-jdk
 fi
 

@@ -7,9 +7,9 @@ chmod a+x getpythia8.sh
 # sudo USRCXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 ./getpythia8.sh /opt/pythia8
 sudo ./getpythia8.sh /opt/pythia8
 if test -d /opt/pythia8/lib64 ; then
-   echo "/opt/pythia8/lib64" >> /etc/ld.so.conf.d/pythia8.conf
+   echo "/opt/pythia8/lib64" > /etc/ld.so.conf.d/pythia8.conf
 else
-   echo "/opt/pythia8/lib" >> /etc/ld.so.conf.d/pythia8.conf
+   echo "/opt/pythia8/lib" > /etc/ld.so.conf.d/pythia8.conf
 fi
 /sbin/ldconfig -v
 
