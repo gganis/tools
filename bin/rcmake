@@ -1,0 +1,57 @@
+#!/bin/sh
+
+CWD=`pwd`
+
+# Get branch name
+BNC=`basename $CWD`
+echo "Configuring branch '$BNC' ..."
+
+SRC="$HOME/local/root/GIT/root"
+
+INS="$HOME/local/root/install/$BNC"
+if test ! -d $INS ; then
+   echo "Install dir $INS does not exists - creating ..."
+   mkdir -p $INS
+   if test ! "x$?" = "x0" ; then
+      echo "Could not create $INS - exiting"
+      exit 1
+   fi
+fi
+
+XCMK=cmake
+CDEF="-Dccache=ON -GNinja"
+CTST=
+CXRD=
+CCBT="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+CGCC=
+XGCC=
+CTBB=
+REST="-Dtmva=OFF"
+REST=
+
+for s in $@ ; do
+  if test "x$s" = "xtest" ; then
+     CTST="-Dtesting=ON"
+  elif test "x$s" = "xxrootd" ; then
+     CXRD="-Dxrootd=ON"
+  elif test "x$s" = "xdebug" ; then
+     CCBT="-DCMAKE_BUILD_TYPE=Debug"
+  elif test "x$s" = "xtbb" ; then
+     CCBT="-Dimt=ON -Dbuiltin_tbb=ON"
+  elif test "x$s" = "xgcc" ; then
+     EGCC=`which gcc`
+     EGXX=`which g++`
+     CGCC="-DCMAKE_C_COMPILER=$EGCC -DCMAKE_CXX_COMPILER=$EGXX"
+  elif test "x$s" = "xoldabi" ; then
+     XGCC="-DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0"
+  else
+     REST="$REST $s"
+  fi
+done
+if test -f $HOME/.rootcmake ; then
+   XTMP=`cat $HOME/.rootcmake`
+   XGCC="$XGCC $XTMP"
+fi
+
+echo "Running '$XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $XGCC $REST'"
+$XCMK $SRC $CDEF -DCMAKE_INSTALL_PREFIX=$INS $CCBT $CTST $CXRD $CGCC $XGCC $REST
