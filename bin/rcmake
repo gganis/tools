@@ -27,15 +27,20 @@ CGCC=
 XGCC=
 CTBB=
 REST="-Dtmva=OFF"
-REST=
 
 for s in $@ ; do
   if test "x$s" = "xtest" ; then
-     CTST="-Dtesting=ON"
+     CTST="$CTST -Dtesting=ON"
+  elif test "x$s" = "xroottest" ; then
+     CTST="$CTST -Droottest=ON"
   elif test "x$s" = "xxrootd" ; then
      CXRD="-Dxrootd=ON"
+  elif test "x$s" = "xxrdbuiltin" ; then
+     CXRD="-Dxrootd=ON -Dbuiltin_xrootd=ON"
   elif test "x$s" = "xdebug" ; then
      CCBT="-DCMAKE_BUILD_TYPE=Debug"
+  elif test "x$s" = "xopt" ; then
+     CCBT="-DCMAKE_BUILD_TYPE=Release"
   elif test "x$s" = "xtbb" ; then
      CCBT="-Dimt=ON -Dbuiltin_tbb=ON"
   elif test "x$s" = "xgcc" ; then
