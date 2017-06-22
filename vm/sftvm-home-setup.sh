@@ -7,9 +7,9 @@ mkdir -p local/jenkins
 # # Get tools
 # cd local
 # git clone https://github.com/gganis/tools.git
+# cd ..
 
 # Set symlinks
-cd ..
 ln -sf local/tools/bin bin
 ln -sf local/tools/etc etc
 ln -sf local/tools/.git-prompt.sh .git-prompt.sh
