@@ -4,6 +4,10 @@
 mkdir -p local/root/GIT
 mkdir -p local/jenkins
 
+# Config git
+git config --global user.email "Gerardo.Ganis@cern.ch"
+git config --global user.name "Gerardo Ganis"
+
 # # Get tools
 # cd local
 # git clone https://github.com/gganis/tools.git
@@ -26,6 +30,7 @@ git clone https://github.com/root-project/rootspi.git
 # Get to jenkins area
 cd ~/local/jenkins
 ln -sf ~/local/tools/jenkins tools
+ln -sf ~/local/root/GIT/rootspi/jenkins GIT
 
 
 
