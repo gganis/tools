@@ -1,0 +1,29 @@
+#! /bin/bash
+#
+# assertbuild:    Assert presence of /build on the second volume (it was: Simple contextualization)
+# author: axel@cern.ch
+# modified:  gerardo.ganis@cern.ch
+#
+# chkconfig: 235 99 01
+# description: Pulls additional configuration from web.
+#
+#
+### BEGIN INIT INFO
+# Provides:          assertbuild
+# Required-Start:    $network $remote_fs
+# Required-Stop:     $network $remote_fs
+# Default-Start:     3 5
+# Default-Stop:      0 1 2 6
+# Short-Description: Contextualization for EPSFT
+# Description:       Pulls additional configuration from web.
+### END INIT INFO
+#
+ASSERTBUILDSH=/tmp/assertbuild.sh
+rm -f $ASSERTBUILDSH
+while ! curl --retry 100 --retry-delay 30 -s -S -o $ASSERTBUILDSH http://test-sftnight.web.cern.ch/test-sftnight/assertbuild/assertbuild.sh; do
+  sleep 30
+done
+chmod u+x $ASSERTBUILDSH
+/bin/bash $ASSERTBUILDSH $1
+# rm -f $ASSERTBUILDSH
+

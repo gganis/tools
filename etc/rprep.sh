@@ -2,7 +2,7 @@
 # Usage:   source ~/etc/rprep.sh <dir_tag>
 #
 if test "x$ROOTSRC" = "x" ; then
-   ROOTSRC="/home/ganis/local/root/GIT/root"
+   ROOTSRC="$HOME/local/root/GIT/root"
 fi
 
 TAG=$1
@@ -12,7 +12,7 @@ if test "x$TAG" = "x" ; then
    echo "   cmakeprep tag"
    exit 1
 fi
-ROOTLOC="/home/ganis/local/root"
+ROOTLOC="$HOME/local/root"
 
 DIRS="$ROOTLOC/build/$TAG $ROOTLOC/install/$TAG"
 for dd in $DIRS; do

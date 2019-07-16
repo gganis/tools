@@ -4,7 +4,7 @@
 set `echo "$1"`
 
 if test "x$ROOTSRC" = "x" ; then
-   ROOTSRC="/home/ganis/local/root/GIT/root"
+   ROOTSRC="$HOME/local/root/GIT/root"
 fi
 
 TAG=$1
@@ -26,7 +26,7 @@ if test "x$NTAG" = "x$TAG" ; then
    exit 1
 fi
 
-ROOTLOC="/home/ganis/local/root"
+ROOTLOC="$HOME/local/root"
 
 DIRS="$ROOTLOC/build $ROOTLOC/install"
 for dd in $DIRS; do
