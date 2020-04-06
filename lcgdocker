@@ -1,0 +1,65 @@
+#!/bin/bash -xe
+
+# Script to start LCG docker containers
+#
+#     $ lcgdocker docker-image [working-space-area]
+#
+
+if test "x$1" = "x" ; then
+    echo "The name of a docker image is required!"
+    echo "Examples: slc6, centos7, ubuntu16, ubuntu18, fedora31, centos8"
+    exit 1
+fi
+DOCKER_IMAGE=$1
+echo "Docker image will be: $DOCKER_IMAGE"
+
+wrksp=$2
+if test "x$wrksp" = "x" || test ! -d $wrksp ; then
+   wrksp="/build/$USER"
+   if test ! -d $wrksp ; then
+      wrksp="/tmp/$USER"
+      mkdir -p $wrksp
+   fi
+fi
+WORKSPACE="$wrksp/jenkins/workspace"
+mkdir -p $WORKSPACE/docker
+echo "Using WORKSPACE_HOST= $WORKSPACE"
+
+export WORKSPACE_HOST=$WORKSPACE
+export WORKSPACE='/workspace'
+
+touch $WORKSPACE_HOST/controlfile
+
+# Prepare number of cpus to use in the container
+TOTALCPU=`nproc --all`
+CONTAINERS_LIMIT=$(($EXECUTOR_NUMBER+1))
+
+if [ -z $DOCKER_CPUS ]; then
+	DOCKER_CPUS=$(($TOTALCPU/$CONTAINERS_LIMIT))
+fi
+
+USER_ID=$(id $(whoami) -u)
+GROUP_ID=$(id $(whoami) -g)
+
+if [ -n "$COPY_LOGS" ]; then
+    COPY_LOGS=OFF
+fi
+
+# Pull image from gitlab
+docker pull gitlab-registry.cern.ch/sft/docker/$DOCKER_IMAGE
+
+if [ -e $WORKSPACE_HOST/docker ]; then
+    rm -rf $WORKSPACE_HOST/docker
+fi
+mkdir -p $WORKSPACE_HOST/docker
+
+docker run -it --rm --privileged -e WORKSPACE=$WORKSPACE \
+                    -e USER=sftnight \
+                    -e SHELL=$SHELL \
+                    -u sftnight \
+                    -v /ccache:/ccache \
+                    -v /ec/conf:/ec/conf \
+                    -v /cvmfs:/cvmfs \
+                    -v /eos:/eos \
+		    gitlab-registry.cern.ch/sft/docker/$DOCKER_IMAGE bash
+
