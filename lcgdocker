@@ -13,7 +13,16 @@ fi
 DOCKER_IMAGE=$1
 echo "Docker image will be: $DOCKER_IMAGE"
 
-wrksp=$2
+pull="yes"
+FULL_IMAGE_PATH=gitlab-registry.cern.ch/sft/docker/$DOCKER_IMAGE
+
+if test "x$2" = "xlocal" ; then
+    wrksp=$3
+    FULL_IMAGE_PATH=$DOCKER_IMAGE
+    pull="no"
+else
+    wrksp=$2
+fi
 if test "x$wrksp" = "x" || test ! -d $wrksp ; then
    wrksp="/build/$USER"
    if test ! -d $wrksp ; then
@@ -41,12 +50,10 @@ fi
 USER_ID=$(id $(whoami) -u)
 GROUP_ID=$(id $(whoami) -g)
 
-if [ -n "$COPY_LOGS" ]; then
-    COPY_LOGS=OFF
-fi
-
 # Pull image from gitlab
-docker pull gitlab-registry.cern.ch/sft/docker/$DOCKER_IMAGE
+if test "x$pull" = "xyes" ; then
+   docker pull $FULL_IMAGE_PATH
+fi
 
 if [ -e $WORKSPACE_HOST/docker ]; then
     rm -rf $WORKSPACE_HOST/docker
@@ -61,5 +68,5 @@ docker run -it --rm --privileged -e WORKSPACE=$WORKSPACE \
                     -v /ec/conf:/ec/conf \
                     -v /cvmfs:/cvmfs \
                     -v /eos:/eos \
-		    gitlab-registry.cern.ch/sft/docker/$DOCKER_IMAGE bash
+		    $FULL_IMAGE_PATH bash
 
