@@ -1,8 +1,8 @@
 # Auxilliary tools
 
-## `./bin`
+## [`./bin`](bin.md)
 
-## `./build`
+## [`./build`](build.md)
 
-## `conf/xrd`
+## [`conf/xrd`](conf-xrd.md)
 
