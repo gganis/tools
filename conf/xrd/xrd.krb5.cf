@@ -1,4 +1,0 @@
-xrootd.seclib libXrdSec.so
-sec.protocol krb5 /etc/krb5.keytab host/<FQDN>
-
-

@@ -1,2 +1,0 @@
-xrootd.seclib libXrdSec.so
-sec.protocol pwd -dir:$HOME/local/xrootd  -d:2
