@@ -1,0 +1,62 @@
+#!/bin/sh
+
+VERS=$1
+shift
+
+CWD=`pwd`
+
+# Get branch name
+BNC=`basename $CWD`
+echo "Configuring branch '$BNC' ..."
+
+SRC="$HOME/local/sft/GIT/lcgcmake"
+
+INS="$HOME/local/sft/install/$VERS"
+if test ! -d $INS ; then
+   echo "Install dir $INS does not exists - creating ..."
+   mkdir -p $INS
+   if test ! "x$?" = "x0" ; then
+      echo "Could not create $INS - exiting"
+      exit 1
+   fi
+fi
+
+XCMK=cmake
+CDEF="-Dccache=ON -GNinja"
+CTST=
+CXRD=
+CCBT="-DCMAKE_BUILD_TYPE=Release"
+CGCC=
+XGCC=
+CTBB=
+INSP="-DLCG_INSTALL_PREFIX=/cvmfs/sft.cern.ch/lcg/releases"
+TARB=""
+REST=""
+system=`uname -s`
+if test "x$system" = "xDarwin" ; then
+   CDEF=""
+   EGCC=`which clang`
+   EGXX=`which clang++`
+   EFC=`which gfortran`
+   CGCC="-DCMAKE_C_COMPILER=$EGCC -DCMAKE_CXX_COMPILER=$EGXX -DCMAKE_Fortran_COMPILER=$EFC"
+   INSP=""
+fi
+
+for s in $@ ; do
+  if test "x$s" = "xdebug" ; then
+     CCBT="-DCMAKE_BUILD_TYPE=Debug"
+  elif test "x$s" = "xnolcginstall" ; then
+     INSP=""
+  elif test "x$s" = "xtarballs" ; then
+     TARB="-DLCG_TARBALL_INSTALL=ON"
+  else
+     REST="$REST $s"
+  fi
+done
+if test -f $HOME/.lcgcmake ; then
+   XTMP=`cat $HOME/.lcgcmake`
+   XGCC="$XGCC $XTMP"
+fi
+
+echo "Running '$XCMK $CDEF -DCMAKE_INSTALL_PREFIX=$INS -DLCG_VERSION=$VERS $INSP $TARB $CCBT $CGCC $REST $SRC'"
+$XCMK $CDEF -DCMAKE_INSTALL_PREFIX=$INS -DLCG_VERSION=$VERS $INSP $TARB $CCBT $CGCC $REST $SRC
